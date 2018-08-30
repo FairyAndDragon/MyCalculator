@@ -1,0 +1,219 @@
+﻿
+@{
+    ViewBag.Title = "简易计算器";
+    Layout = null;// "~/Views/Shared/_Index.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCalculator</title>
+    @*<link href="~/Content/css/framework-font.css" rel="stylesheet" />
+        <script src="~/Content/js/jquery/jquery-2.1.1.min.js"></script>*@
+    <link href="~/Content/Flex.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+    <!--[if lte IE 8]>
+        <div id="errorie"><div>您还在使用老掉牙的IE，正常使用系统前请升级您的浏览器到 IE8以上版本 <a target="_blank" href="http://windows.microsoft.com/zh-cn/internet-explorer/ie-8-worldwide-languages">点击升级</a>&nbsp;&nbsp;强烈建议您更改换浏览器：<a href="http://down.tech.sina.com.cn/content/40975.html" target="_blank">谷歌 Chrome</a></div></div>
+    <![endif]-->
+    <style type="text/css">
+        button {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    <script>
+    </script>
+</head>
+<body onload="loading()">
+    <div class="wrapper">
+        <div class="container">
+            
+            <form class="form">
+                <div class="calculator"><span>简易计算器</span>
+                </div>
+
+                <input class="display_expression" id="expression" type="text" readonly="readonly"  placeholder="算式">
+                @*多行问题*@
+
+                <button class="input_group" id="number_7" type="button" value="7"><span>7</span></button>
+                <button class="input_group" id="number_8" type="button" value="8"><span>8</span></button>
+                <button class="input_group" id="number_9" type="button" value="9"><span>9</span></button>
+                <button class="input_group" id="operationalCharacter_divide" type="button" value="/"><span>÷</span></button>
+                @*<button class="input_group" id="operationalCharacter_divide" type="button" value="/">/</button><br />*@
+                
+                <button class="input_group" id="number_4" type="button" value="4"><span>4</span></button>
+                <button class="input_group" id="number_5" type="button" value="5"><span>5</span></button>
+
+                <button class="input_group" id="number_6" type="button" value="6"><span>6</span></button>
+                <button class="input_group" id="operationalCharacter_multiply" type="button" value="*"><span>×</span></button>
+                @*<button id="operationalCharacter_multiply" type="button" value="*">*</button><br />*@
+               
+                <button class="input_group" id="number_1" type="button" value="1"><span>1</span></button>
+                <button class="input_group" id="number_2" type="button" value="2"><span>2</span></button>
+                <button class="input_group" id="number_3" type="button" value="3"><span>3</span></button>
+                <button class="input_group" id="operationalCharacter_add" type="button" value="+"><span>+</span></button>
+               
+                @*<button class="input_group" id="number_blank" type="button" value="null" disabled="disabled"><span></span></button>*@
+                <button class="input_clear" id="number_clear" type="button" value="clear"><span>清空</span></button>
+                <button class="input_group" id="number_0" type="button" value="0"><span>0</span></button>
+                <button class="input_group" id="number_point" type="button" value="."><span>.</span></button>
+                <button class="input_group" id="operationalCharacter_minus" type="button" value="-"><span>-</span></button>
+                
+                <button class="input_equal"id="operationalCharacter_equal" type="button" style="width:200px"><span>=</span></button>
+              
+            </form>
+        </div>
+        <ul class="bg_bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="copyright">
+        <a href="http://www.fairy.com" style="text-decoration:none;color:dodgerblue;">Fairy开发出品</a>
+        <br>
+        适用浏览器：IE8以上、FireFox、Chrome.
+    </div>
+
+    <script type="text/javascript">
+        /**加载
+         * */
+        function loading() {
+            initialise();
+        }
+        //初始化
+
+        //$('#number_7').on('click', function (e) {
+        //    $("#expression").val($("#expression").val() + "7");
+        //});
+
+        var resultLast;//保留上一次计算结果
+        var finishLast = false;//上一次计算是否完成
+        var operationUsed = false;//运算符使用问题
+        var lastIsOperator = false;//前一个输入是否为运算符，用于修改小数点的显示格式
+        var pointUsed = false;//用于小数点使用
+        var lastChar = "";
+
+        function initialise() {
+            $("#expression").val("");
+
+            resultLast;//保留上一次计算结果
+            finishLast = false;//上一次计算是否完成
+            operationUsed = false;//运算符使用问题
+
+            lastIsOperator = false;
+            pointUsed = false;
+        };
+
+        //输入
+        $(".input_group").click(function (e) {
+            var value = this.getAttribute('value');
+
+            if ($('#expression').val() == "")
+            {   //开头处逻辑处理
+                if (value == "+" || value == "*" || value == "/")//第一个数符号问题，+n=n，-n，没有*n、/n
+                    value = "";
+                if (value == ".")//第一个数小数问题，.n=0.n
+                {
+                    value = "0.";
+                    pointUsed = true;
+                }
+            }
+            else
+            { //中间处逻辑处理
+                if (value == ".")
+                {//小数点问题
+                    if (pointUsed)
+                        value = "";
+                    else
+                        if (lastIsOperator)
+                            value = "0.";
+                }
+                //上一次计算结果参与下一次运算
+                if (value == "+" || value == "-" || value == "*" || value == "/")
+                {
+                    if (lastChar == "+" || lastChar == "-" || lastChar == "*" || lastChar == "/") {
+                        //alert("value=" + value + "  lastChar=" + lastChar);
+                        var temp = $('#expression').val();
+                        //alert("temp=" + temp);
+                        temp = temp.substring(0, temp.length - 1);
+                       // alert(temp);
+                        $('#expression').val(temp);
+                    }
+                    else
+                    {
+                        lastIsOperator = true;
+                        if (finishLast)//通过上一次计算
+                        {
+                            $('#expression').val(resultLast);
+                            resultLast = "";//清空上一次计算结果
+                            finishLast = false;//恢复上一次计算结果标志
+
+                        }
+                        else {
+                            if (operationUsed) {//连续计算
+                                calculate();//调用一次运算 
+                                alert("1");
+                                if (finishLast) {
+                                    alert("2");
+                                    $('#expression').val(resultLast);
+                                    finishLast = false;
+                                    resultLast = "";
+                                }
+                                operationUsed = false;
+                            }
+                        }
+                        operationUsed = true;
+                        pointUsed = false;
+                    }
+                }
+                else
+                {
+                    lastIsOperator = false;
+                    if (finishLast)
+                        if (confirm("开始新的计算？"))
+                            initialise();
+                        else
+                            value = "";
+                }
+            }
+            lastChar = value;
+            $('#expression').val($('#expression').val() + value);
+        });
+
+        //清空
+        $("#number_clear").click(function () {
+            initialise();
+        });
+        //ajax提交，两个数的计算
+        function calculate() {
+            var expression = $('#expression').val();
+            $.ajax({
+                type: 'POST',
+                url: "/Home/Calculate",
+                data: {
+                    expression: $('#expression').val(),
+                },
+                dataType: "json",
+                success: function (data) {
+                        $('#expression').val(expression + "=" + data);
+                    resultLast = data;
+                    finishLast = true;
+                },
+                error: function (data) {
+                    alert("输入错误！");
+                }
+
+            });
+        };
+        //计算
+        $("#operationalCharacter_equal").click(function () {
+            calculate();
+        })
+    </script>
+</body>
+</html>
