@@ -29,15 +29,15 @@
     </script>
 </head>
 <body onload="loading()">
-    <h1 dsdd的城市/>
     <div class="wrapper">
         <div class="container">
-            
+
             <form class="form">
-                <div class="calculator"><span>简易计算器</span>
+                <div class="calculator">
+                    <span>简易12计算器</span>
                 </div>
 
-                <input class="display_expression" id="expression" type="text" readonly="readonly"  placeholder="算式">
+                <input class="display_expression" id="expression" type="text" readonly="readonly" placeholder="算式">
                 @*多行问题*@
 
                 <button class="input_group" id="number_7" type="button" value="7"><span>7</span></button>
@@ -45,27 +45,27 @@
                 <button class="input_group" id="number_9" type="button" value="9"><span>9</span></button>
                 <button class="input_group" id="operationalCharacter_divide" type="button" value="/"><span>÷</span></button>
                 @*<button class="input_group" id="operationalCharacter_divide" type="button" value="/">/</button><br />*@
-                
+
                 <button class="input_group" id="number_4" type="button" value="4"><span>4</span></button>
                 <button class="input_group" id="number_5" type="button" value="5"><span>5</span></button>
 
                 <button class="input_group" id="number_6" type="button" value="6"><span>6</span></button>
                 <button class="input_group" id="operationalCharacter_multiply" type="button" value="*"><span>×</span></button>
                 @*<button id="operationalCharacter_multiply" type="button" value="*">*</button><br />*@
-               
+
                 <button class="input_group" id="number_1" type="button" value="1"><span>1</span></button>
                 <button class="input_group" id="number_2" type="button" value="2"><span>2</span></button>
                 <button class="input_group" id="number_3" type="button" value="3"><span>3</span></button>
                 <button class="input_group" id="operationalCharacter_add" type="button" value="+"><span>+</span></button>
-               
+
                 @*<button class="input_group" id="number_blank" type="button" value="null" disabled="disabled"><span></span></button>*@
                 <button class="input_clear" id="number_clear" type="button" value="clear"><span>清空</span></button>
                 <button class="input_group" id="number_0" type="button" value="0"><span>0</span></button>
                 <button class="input_group" id="number_point" type="button" value="."><span>.</span></button>
                 <button class="input_group" id="operationalCharacter_minus" type="button" value="-"><span>-</span></button>
-                
-                <button class="input_equal"id="operationalCharacter_equal" type="button" style="width:200px"><span>=</span></button>
-              
+
+                <button class="input_equal" id="operationalCharacter_equal" type="button" style="width:200px"><span>=</span></button>
+
             </form>
         </div>
         <ul class="bg_bubbles">
@@ -74,6 +74,7 @@
             <li></li>
         </ul>
     </div>
+
     <div class="copyright">
         <a href="http://www.fairy.com" style="text-decoration:none;color:dodgerblue;">Fairy开发出品</a>
         <br>
@@ -114,8 +115,7 @@
         $(".input_group").click(function (e) {
             var value = this.getAttribute('value');
 
-            if ($('#expression').val() == "")
-            {   //开头处逻辑处理
+            if ($('#expression').val() == "") {   //开头处逻辑处理
                 if (value == "+" || value == "*" || value == "/")//第一个数符号问题，+n=n，-n，没有*n、/n
                     value = "";
                 if (value == ".")//第一个数小数问题，.n=0.n
@@ -124,10 +124,8 @@
                     pointUsed = true;
                 }
             }
-            else
-            { //中间处逻辑处理
-                if (value == ".")
-                {//小数点问题
+            else { //中间处逻辑处理
+                if (value == ".") {//小数点问题
                     if (pointUsed)
                         value = "";
                     else
@@ -135,18 +133,16 @@
                             value = "0.";
                 }
                 //上一次计算结果参与下一次运算
-                if (value == "+" || value == "-" || value == "*" || value == "/")
-                {
+                if (value == "+" || value == "-" || value == "*" || value == "/") {
                     if (lastChar == "+" || lastChar == "-" || lastChar == "*" || lastChar == "/") {
                         //alert("value=" + value + "  lastChar=" + lastChar);
                         var temp = $('#expression').val();
                         //alert("temp=" + temp);
                         temp = temp.substring(0, temp.length - 1);
-                       // alert(temp);
+                        // alert(temp);
                         $('#expression').val(temp);
                     }
-                    else
-                    {
+                    else {
                         lastIsOperator = true;
                         if (finishLast)//通过上一次计算
                         {
@@ -157,7 +153,7 @@
                         }
                         else {
                             if (operationUsed) {//连续计算
-                                calculate();//调用一次运算 
+                                calculate();//调用一次运算
                                 alert("1");
                                 if (finishLast) {
                                     alert("2");
@@ -172,8 +168,7 @@
                         pointUsed = false;
                     }
                 }
-                else
-                {
+                else {
                     lastIsOperator = false;
                     if (finishLast)
                         if (confirm("开始新的计算？"))
@@ -201,7 +196,7 @@
                 },
                 dataType: "json",
                 success: function (data) {
-                        $('#expression').val(expression + "=" + data);
+                    $('#expression').val(expression + "=" + data);
                     resultLast = data;
                     finishLast = true;
                 },
